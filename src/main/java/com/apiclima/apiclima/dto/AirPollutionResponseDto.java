@@ -3,6 +3,7 @@ package com.apiclima.apiclima.dto;
 import java.util.List;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 //! Implementamos los datos que devolvera nuestras peticiones 
@@ -19,13 +20,15 @@ public class AirPollutionResponseDto {
     }
 
     @Data
+    @Getter
     public static class PollutionDataDTO {
         private MainDTO main;
         private ComponentsDTO components;
         private long dt;
     }
-
+    
     @Data
+    @Getter
     public static class MainDTO {
         private int aqi;  // Índice de calidad del aire (AQI)
     }
