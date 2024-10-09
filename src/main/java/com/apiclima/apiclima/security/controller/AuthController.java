@@ -58,7 +58,7 @@ public class AuthController {
 
 
     @PostMapping("/nuevo")
-    public ResponseEntity<Mensaje> nuevo(@Valid @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult) {
+    public ResponseEntity<?> nuevo(@Valid @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) 
             return new ResponseEntity<>(new Mensaje("Verifique los datos introducidos"), HttpStatus.BAD_REQUEST);
         
@@ -78,7 +78,6 @@ public class AuthController {
     
         // Asignar roles
         Set<Rol> roles = new HashSet<>();
-        logger.info("Roles recibidos antes del if: " + nuevoUsuario.getRoles());
         // Verificar si el usuario solicitó el rol de admin
         if (nuevoUsuario.getRoles().contains(RolNombre.ROLE_ADMIN)) {
             System.out.println("Rol de admin detectado");
@@ -90,13 +89,25 @@ public class AuthController {
         }
         
         // Antes de la verificación de roles
-        logger.info("Roles recibidos: " + nuevoUsuario.getRoles());
-        System.out.println("NOMBRE DEL ROL CREADO" + nuevoUsuario.getRoles());
         usuario.setRoles(roles);
-    
         usuarioService.save(usuario);
-    
-        return new ResponseEntity<>(new Mensaje("Usuario registrado con éxito"), HttpStatus.CREATED);
+
+        // Autenticar al usuario recién creado
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(nuevoUsuario.getNombreUsuario(), nuevoUsuario.getPassword())
+        );
+
+        // Establecer el contexto de seguridad
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Generar el JWT
+        String jwt = jwtProvider.generateToken(authentication);
+
+        // Crear DTO con el token y los detalles del usuario
+        JwtDto jwtDto = new JwtDto(jwt);
+
+        // Devolver el token con el mensaje de éxito
+        return new ResponseEntity<>(jwtDto, HttpStatus.OK);
     }
     
 

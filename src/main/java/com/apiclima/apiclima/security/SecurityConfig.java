@@ -59,6 +59,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Deshabilita CSRF por simplicidad
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**", "/error").permitAll() //? Rutas permitidas sin autenticación
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                 .requestMatchers("/api/weather/current/**", "/error").authenticated() //! Ambos perfiles pueden accceder
                 .requestMatchers("/api/weather/forecast/**").hasRole("ADMIN") //! Solo los ADMIN pueden acceder
                 .requestMatchers("/api/weather/air_pollution/**").hasRole("ADMIN") //! Solo los ADMIN pueden acceder

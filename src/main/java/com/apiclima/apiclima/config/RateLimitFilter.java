@@ -17,7 +17,7 @@ public class RateLimitFilter implements Filter {
     private ConcurrentHashMap<String, RateLimiter> clientRequestCounts = new ConcurrentHashMap<>();
 
     // Configuración de límite
-    private static final int MAX_REQUESTS_PER_MINUTE = 2; // 2 solicitudes por minuto
+    private static final int MAX_REQUESTS_PER_MINUTE = 10; // 2 solicitudes por minuto
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
